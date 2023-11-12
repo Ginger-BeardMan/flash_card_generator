@@ -13,7 +13,6 @@ unknown_card_list = []
 
 def change_word():
     global current_card, flip_timer
-    print(current_card)
     window.after_cancel(flip_timer)
     current_card = random.choice(french_dict)
     canvas.itemconfig(card_background, image=card_front)
@@ -36,10 +35,10 @@ def flip_card():
 #     french_dict.remove(current_card)
 #
 #
-# def save_unknown():
-#     unknown_card_list.append(current_card)
-#     with open('words_to_learn.csv', 'w') as new_data:
-#         new_data.write(unknown_card_list[-1])
+def save_unknown():
+    unknown_card_list.append(current_card)
+    study_data = pd.DataFrame(unknown_card_list)
+    study_data.to_csv('words_to_learn.csv', mode='w', index=False)
 
 
 # ----------------------------- UI SETUP ------------------------------------ #
