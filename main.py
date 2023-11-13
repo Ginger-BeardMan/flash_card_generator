@@ -6,11 +6,11 @@ BACKGROUND_COLOR = "#B1DDC6"
 
 # ---------------------------- CARD GENERATOR ------------------------------- #
 try:
-    data_file = pd.read_csv('../data/words_to_learn.csv')
+    data_file = pd.read_csv('data/words_to_learn.csv')
+    french_dict = data_file.to_dict(orient='records')
 except FileNotFoundError:
-    data_file = pd.read_csv('../data/french_words.csv')
-
-french_dict = data_file.to_dict(orient='records')
+    data_file = pd.read_csv('data/french_words.csv')
+    french_dict = data_file.to_dict(orient='records')
 
 current_card = {}
 unknown_card_list = []
@@ -47,10 +47,10 @@ def save_unknown():
     if current_card not in unknown_card_list:
         unknown_card_list.append(current_card)
         study_data = pd.DataFrame(unknown_card_list)
-        study_data.to_csv('../data/words_to_learn.csv', mode='w', index=False)
-
+        study_data.to_csv('data/words_to_learn.csv', mode='w', index=False)
 
 # ----------------------------- UI SETUP ------------------------------------ #
+
 
 window = Tk()
 window.title('Flashy')
@@ -72,14 +72,15 @@ study_word = canvas.create_text(400, 263, text='', font=('Ariel', 60, 'bold'))
 
 x_image = PhotoImage(file='../images/wrong.png')
 unknown_button = Button(text='Incorrect', image=x_image, bg=BACKGROUND_COLOR, highlightthickness=0,
-                        command=change_word)
+                        command=lambda: [save_unknown(), change_word()])
 unknown_button.grid(column=0, row=1)
 
 check_image = PhotoImage(file='../images/right.png')
 known_button = Button(text='Correct', image=check_image, bg=BACKGROUND_COLOR, highlightthickness=0,
-                      command=change_word)
+                      command=lambda: [save_known(), change_word()])
 known_button.grid(column=1, row=1)
 
 change_word()
 
 window.mainloop()
+
