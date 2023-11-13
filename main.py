@@ -5,40 +5,49 @@ import pandas as pd
 BACKGROUND_COLOR = "#B1DDC6"
 
 # ---------------------------- CARD GENERATOR ------------------------------- #
-data_file = pd.read_csv('../data/french_words.csv')
+try:
+    data_file = pd.read_csv('../data/words_to_learn.csv')
+except FileNotFoundError:
+    data_file = pd.read_csv('../data/french_words.csv')
+
 french_dict = data_file.to_dict(orient='records')
+
 current_card = {}
 unknown_card_list = []
+known_card_list = []
 
 
 def change_word():
     global current_card, flip_timer
     window.after_cancel(flip_timer)
     current_card = random.choice(french_dict)
-    canvas.itemconfig(card_background, image=card_front)
-    canvas.itemconfig(card_title, text='French', fill='black')
-    canvas.itemconfig(study_word, text=current_card['French'], fill='black')
-    flip_timer = window.after(3000, func=flip_card)
+    if current_card in known_card_list:
+        change_word()
+    else:
+        canvas.itemconfig(card_background, image=card_front)
+        canvas.itemconfig(card_title, text='French', fill='black')
+        canvas.itemconfig(study_word, text=current_card['French'], fill='black')
+        flip_timer = window.after(3000, func=flip_card)
+        print(known_card_list)
 
 
 def flip_card():
     canvas.itemconfig(card_background, image=card_back)
     canvas.itemconfig(card_title, text='English', fill='white')
     canvas.itemconfig(study_word, text=current_card['English'], fill='white')
-    if unknown_button:
-        save_unknown()
 
 
 # ----------------------------- SAVE RESULTS -------------------------------- #
 
-# def remove_known():
-#     french_dict.remove(current_card)
-#
-#
+def save_known():
+    known_card_list.append(current_card)
+
+
 def save_unknown():
-    unknown_card_list.append(current_card)
-    study_data = pd.DataFrame(unknown_card_list)
-    study_data.to_csv('words_to_learn.csv', mode='w', index=False)
+    if current_card not in unknown_card_list:
+        unknown_card_list.append(current_card)
+        study_data = pd.DataFrame(unknown_card_list)
+        study_data.to_csv('../data/words_to_learn.csv', mode='w', index=False)
 
 
 # ----------------------------- UI SETUP ------------------------------------ #
