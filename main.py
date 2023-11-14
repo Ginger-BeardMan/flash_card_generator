@@ -1,4 +1,5 @@
 from tkinter import *
+from tkinter import messagebox
 import random
 import pandas as pd
 
@@ -19,16 +20,17 @@ known_card_list = []
 
 def change_word():
     global current_card, flip_timer
-    window.after_cancel(flip_timer)
-    current_card = random.choice(french_dict)
-    if current_card in known_card_list:
-        change_word()
-    else:
+    if len(french_dict) > 0:
+        window.after_cancel(flip_timer)
+        current_card = random.choice(french_dict)
         canvas.itemconfig(card_background, image=card_front)
         canvas.itemconfig(card_title, text='French', fill='black')
         canvas.itemconfig(study_word, text=current_card['French'], fill='black')
         flip_timer = window.after(3000, func=flip_card)
-        print(known_card_list)
+        french_dict.remove(current_card)
+    else:
+        messagebox.showwarning(title='Complete', message='There are no more words to study. Please close the program.')
+        window.destroy()
 
 
 def flip_card():
@@ -77,10 +79,9 @@ unknown_button.grid(column=0, row=1)
 
 check_image = PhotoImage(file='../images/right.png')
 known_button = Button(text='Correct', image=check_image, bg=BACKGROUND_COLOR, highlightthickness=0,
-                      command=lambda: [save_known(), change_word()])
+                      command=change_word)
 known_button.grid(column=1, row=1)
 
 change_word()
 
 window.mainloop()
-
