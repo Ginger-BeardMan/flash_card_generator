@@ -41,10 +41,6 @@ def flip_card():
 
 # ----------------------------- SAVE RESULTS -------------------------------- #
 
-def save_known():
-    known_card_list.append(current_card)
-
-
 def save_unknown():
     if current_card not in unknown_card_list:
         unknown_card_list.append(current_card)
